@@ -1,0 +1,103 @@
+
+
+Q1
+SELECT DISTINCT a.name
+FROM Reviewer a
+JOIN Rating b ON a.rID = b.rID
+JOIN Movie c ON b.mID = c.mID AND c.title = 'Gone with the Wind'
+
+Q2
+SELECT DISTINCT a.name, c.title, b.stars
+FROM Reviewer a
+JOIN Rating b ON a.rID = b.rID
+JOIN Movie c ON b.mID = c.mID 
+WHERE a.name = c.director
+
+Q3
+SELECT t.name
+FROM (SELECT DISTINCT name
+      FROM Reviewer
+      UNION
+      SELECT title AS name
+      FROM Movie) AS t
+ORDER BY t.name
+
+Q4
+SELECT DISTINCT title
+FROM Movie 
+WHERE mID NOT IN (SELECT mID 
+                   FROM Reviewer b JOIN Rating c ON b.rID = c.rID
+                   WHERE name = "Chris Jackson")
+                   
+Q5
+SELECT DISTINCT t1.name, t3.name
+FROM Reviewer t1
+JOIN (SELECT a.rID AS ID1, b.rID AS ID2
+       FROM Rating a, Rating b 
+       WHERE a.mID = b.mID and a.rID <> b.rID) AS t2 ON t1. rID = t2.ID1
+JOIN Reviewer t3 ON t2.ID2 = t3.rID
+WHERE t1.name < t3.name
+ORDER BY t1.name
+
+Q6
+SELECT DISTINCT a.name, c.title, b.stars
+FROM Reviewer a
+JOIN Rating b ON a.rID = b.rID
+JOIN Movie c ON b.mID = c.mID 
+WHERE b.stars IN (SELECT MIN(stars) FROM Rating)
+
+Q7
+SELECT DISTINCT b.title, AVG(a.stars)
+FROM Rating a 
+JOIN Movie b ON a.mID = b.mID
+GROUP BY b.title
+ORDER BY AVG(a.stars) DESC, b.title
+
+Q8
+SELECT DISTINCT a.name
+FROM Reviewer a 
+JOIN Rating b ON a.rID = b.rID
+GROUP BY a.name
+HAVING COUNT(*) > 2
+
+Q9
+SELECT title, director
+FROM Movie
+WHERE director IN (SELECT director
+                     FROM Movie 
+                     GROUP BY director
+                     HAVING COUNT(*) > 1)
+ORDER BY director, title
+
+Q10
+SELECT a.title, AVG(b.stars)
+FROM Movie a 
+JOIN Rating b ON a.mID = b.mID
+GROUP BY a.title
+HAVING AVG(b.stars) IN (SELECT AVG(b.stars)
+                       FROM Movie a 
+                       JOIN Rating b ON a.mID = b.mID
+                       GROUP BY a.title
+                       ORDER BY AVG(b.stars) DESC
+                       LIMIT 1)
+
+Q11
+SELECT a.title, AVG(b.stars)
+FROM Movie a 
+JOIN Rating b ON a.mID = b.mID
+GROUP BY a.title
+HAVING AVG(b.stars) IN (SELECT AVG(b.stars)
+                       FROM Movie a 
+                       JOIN Rating b ON a.mID = b.mID
+                       GROUP BY a.title
+                       ORDER BY AVG(b.stars)
+                       LIMIT 1)
+
+Q12
+SELECT t1.director, t1.title, t2.Max_stars
+FROM Movie t1
+JOIN (SELECT a.director, MAX(b.stars) AS Max_stars
+        FROM Movie a 
+        JOIN Rating b ON a.mID = b.mID
+        GROUP BY a.director) AS t2 ON t1.director = t2.director
+
