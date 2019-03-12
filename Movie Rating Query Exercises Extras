@@ -1,4 +1,5 @@
 
+## Solutions to Movie Rating Query Exercises Extras
 
 Q1
 SELECT DISTINCT a.name
