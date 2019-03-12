@@ -1,0 +1,67 @@
+# Stanford-DB5-SQL-Course-Solutions-Movie-Rating-Query-Exercises
+Solutions to Stanford DB5 SQL course exercises
+
+Q1
+SELECT title 
+FROM Movie 
+WHERE director = 'Steven Spielberg'
+
+Q2
+SELECT DISTINCT b.year
+FROM rating a
+JOIN Movie b ON a.mID = b.mID AND a.stars IN (4,5)
+ORDER BY b.year
+
+Q3
+SELECT title 
+FROM Movie 
+WHERE mID NOT IN (SELECT mID from Rating)
+
+Q4
+SELECT DISTINCT b.name
+FROM Rating a
+JOIN REVIEWER b ON a.rID = b.rID AND a.ratingDate IS NULL
+
+Q5
+SELECT c.name, b.title, a.stars, a.ratingDate
+FROM rating a
+JOIN Movie b ON a.mID = b.mID
+JOIN Reviewer c ON a.rID = c.rID
+ORDER BY c.name, b.title, a.stars
+
+Q6
+SELECT t3.name, t1.title
+FROM Movie t1
+JOIN (SELECT a.mID, a.rID,a.stars, b.stars FROM Rating a, Rating b 
+        WHERE a.mID = b.mID AND a.rID = b.rID AND a.stars < b.stars AND a.ratingDate < b.ratingDate) AS t2 ON t1.mID = t2.mID
+JOIN Reviewer t3 ON t2.rID = t3.rID
+
+Q7
+SELECT b.title, MAX(a.stars)
+FROM Rating a
+JOIN Movie b ON a.mID = b.mID
+GROUP BY a.mID
+ORDER BY b.title
+
+Q8
+SELECT b.title, MAX(a.stars)-MIN(a.stars)
+FROM Rating a
+JOIN Movie b ON a.mID = b.mID
+GROUP BY a.mID
+ORDER BY MAX(a.stars)-MIN(a.stars) DESC, b.title
+
+Q9
+SELECT ABS(B.postAvg - A.postAvg)
+FROM
+((SELECT AVG(avgRating) as postAvg, 'post' as type
+   FROM(SELECT title, year, AVG(stars) as avgRating
+      FROM Movie NATURAL JOIN Rating
+      WHERE year > 1980
+      GROUP BY title)) A
+JOIN 
+(SELECT AVG(avgRating) as postAvg, 'post' as type
+FROM(SELECT title, year, AVG(stars) as avgRating
+      FROM Movie NATURAL JOIN Rating
+      WHERE year < 1980
+      GROUP BY title)) B
+      ON B.type=A.type)
