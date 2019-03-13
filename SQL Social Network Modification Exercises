@@ -1,0 +1,23 @@
+## Solutions to SQL Social Network Modification Exercises
+
+Q1
+DELETE FROM Highschooler
+WHERE grade = 12
+
+Q2
+DELETE FROM Likes
+WHERE ID1 IN (SELECT b.ID1 
+              FROM Friend a
+              JOIN likes b ON a.ID1 = b.ID1 AND a.ID2 = b.ID2) 
+AND ID2 NOT IN (SELECT b.ID1 
+                FROM Friend a
+                JOIN likes b ON a.ID1 = b.ID1 AND a.ID2 = b.ID2)
+
+Q3
+INSERT INTO Friend
+SELECT a.ID1, b.ID2
+FROM Friend a, Friend b
+WHERE a.ID2 = b.ID1 AND a.ID1 <> b.ID2
+EXCEPT
+SELECT ID1, ID2
+FROM Friend
