@@ -1,0 +1,25 @@
+## Solutions to Movie Rating Modification Exercises
+
+Q1
+INSERT INTO Reviewer
+VALUES (209, "Roger Ebert")
+
+Q2
+INSERT INTO Rating
+SELECT (SELECT rId FROM Reviewer WHERE name = "James Cameron"), mId, 5, NULL
+FROM Movie
+
+Q3
+UPDATE Movie
+SET year = year + 25
+WHERE mId IN (SELECT mId
+              FROM Movie a
+              JOIN Rating b ON a.mId = b.mId
+              GROUP BY mId
+              HAVING AVG(stars) >= 4)
+              
+Q4
+DELETE FROM Rating
+WHERE mId IN (SELECT mId
+              FROM Movie
+              WHERE year < 1970 OR year > 2000) AND stars < 4
