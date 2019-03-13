@@ -1,2 +1,2 @@
-# Stanford-DB5-SQL-Course-Solutions-Movie-Rating-Query-Exercises
-Solutions to Stanford DB5 SQL course exercises
+# Stanford-DB5-SQL-Course-Exercises
+The txt files contain solutions to exercises from Stanford DB5 SQL course.
