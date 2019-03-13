@@ -1,0 +1,73 @@
+## Solutions to SQL Social Network Query Exercises
+
+Q1
+SELECT b.name
+FROM Friend a
+JOIN Highschooler b ON a.ID1 = b.ID
+JOIN Highschooler c ON a.ID2 = c.ID
+WHERE c.name = 'Gabriel'
+
+Q2
+SELECT b.name, b.grade, c.name, c.grade
+FROM Likes a
+JOIN Highschooler b ON a.ID1 = b.ID
+JOIN Highschooler c ON a.ID2 = c.ID
+WHERE (b.grade - c.grade) >= 2
+
+Q3
+SELECT c.Name, c.grade, d.Name, d.grade
+FROM Likes a
+JOIN Likes b ON a.ID2 = b.ID1 AND a.ID1 = b.ID2
+JOIN Highschooler c ON a.ID1 = c.ID
+JOIN Highschooler d ON a.ID2 = d.ID
+WHERE c.Name < d.Name
+
+Q4
+SELECT name, grade
+FROM Highschooler 
+WHERE ID NOT IN (SELECT ID1 FROM Likes) AND ID NOT IN (SELECT ID2 FROM Likes)
+ORDER BY grade, name
+
+Q5
+SELECT b.name, b.grade, c.name, c.grade
+FROM Likes a
+JOIN Highschooler b ON a.ID1 = b.ID
+JOIN Highschooler c ON a.ID2 = c.ID
+WHERE a.ID2 NOT IN (SELECT ID1 FROM Likes)
+
+Q6
+SELECT DISTINCT b.name, b.grade
+FROM Friend a
+JOIN Highschooler b ON a.ID1 = b.ID
+EXCEPT
+SELECT d.name, d.grade
+FROM Friend c
+JOIN Highschooler d ON c.ID1 = d.ID
+JOIN Highschooler e ON c.ID2 = e.ID AND d.grade <> e.grade
+ORDER BY b.grade, b.name
+
+Q7
+SELECT a.name, a.grade, c.name, c.grade, f.name, f.grade
+FROM HighSchooler a,
+(SELECT ID1, ID2
+ FROM Likes 
+ EXCEPT
+ SELECT ID1, ID2
+ FROM Friend) AS b,
+ Highschooler c,
+ Friend d,
+ Friend e,
+ Highschooler f
+ WHERE a.ID = b.ID1 AND b.ID2 = c.ID AND a.ID = d.ID1 AND c.ID = e.ID1 AND d.ID2 = e.ID2 AND e.ID2 = f.ID
+ 
+Q8
+SELECT COUNT(*) - COUNT(DISTINCT name)
+FROM Highschooler;
+
+Q9
+SELECT a.name, a.grade
+FROM Highschooler a
+JOIN (SELECT ID2
+      FROM Likes
+      GROUP BY ID2
+      HAVING COUNT(*) > 1) AS b ON a.ID = b.ID2
