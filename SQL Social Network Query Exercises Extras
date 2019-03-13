@@ -1,0 +1,37 @@
+## SQL Social Network Query Exercises Extras
+
+Q1
+SELECT c.name, c.grade, d.name, d.grade, e.name, e.grade
+FROM Likes a, Likes b, HighSchooler c, Highschooler d, Highschooler e
+WHERE a.ID2 = b.ID1 AND a.ID1 <> b.ID2 AND a.ID1 = c.ID AND a.ID2 = d.ID AND b.ID2 = e.ID
+
+Q2
+SELECT DISTINCT t2.name, t2.grade
+FROM Friend t1
+JOIN Highschooler t2 ON t1.ID1 = t2.ID
+WHERE ID1 NOT IN (SELECT a.ID1
+                  FROM Friend a, HighSchooler b, Highschooler c
+                  WHERE a.ID1 = b.ID AND a.ID2 = c.ID AND b.grade = c.grade)
+
+Q3
+SELECT AVG(count)
+FROM (SELECT COUNT(*) AS count
+      FROM Friend
+      GROUP BY ID1)
+
+Q4
+SELECT COUNT(DISTINCT b.ID2) + COUNT(DISTINCT c.ID2)
+FROM Highschooler a, Friend b, Friend c
+WHERE a.name = 'Cassandra' AND a.ID = b.ID1 AND b.ID2 = c.ID1 AND a.ID <> c.ID2
+
+Q5
+SELECT t1.name, t1.grade
+FROM Highschooler t1
+JOIN Friend t2 ON t1.ID = t2.ID1
+GROUP BY t1.ID
+HAVING COUNT(*) = (SELECT COUNT(*)
+                    FROM Friend
+                    GROUP BY ID1
+                    ORDER BY COUNT(*) DESC
+                    LIMIT 1)
+
